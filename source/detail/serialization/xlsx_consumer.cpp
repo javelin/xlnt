@@ -466,7 +466,8 @@ void read_defined_names(worksheet ws, std::vector<defined_name> defined_names)
     {
         if (name.sheet_id != ws.id() - 1)
         {
-            continue;
+            if (name.sheet_title != ws.title()) continue;
+            name.sheet_id = ws.id() - 1;
         }
 
         if (name.name == "_xlnm.Print_Titles")
@@ -534,6 +535,20 @@ void read_defined_names(worksheet ws, std::vector<defined_name> defined_names)
             if (is_valid_reference(ref))
             {
                 ws.print_area(ref);
+            }
+        }
+        else {
+            auto i = name.value.find("!");
+            if (i != std::string::npos) {
+                auto ref = name.value.substr(i + 1);
+                if (is_valid_reference(ref))
+                {
+                    try {
+                        ws.create_named_range(name.name, ref);
+                    }
+                    catch (const xlnt::exception& e) {
+                    }
+                }
             }
         }
     }
@@ -2160,8 +2175,14 @@ void xlsx_consumer::read_office_document(const std::string &content_type) // CT_
                 {
                     name.hidden = is_true(parser().attribute("hidden"));
                 }
+                if (parser().attribute_present("function"))
+                {
+                    name.function = is_true(parser().attribute("function"));
+                }
                 parser().attribute_map(); // skip remaining attributes
                 name.value = read_text();
+                auto i = name.value.find('!');
+                if (i != std::string::npos) name.sheet_title = name.value.substr(1, i - 2);
                 defined_names_.push_back(name);
 
                 expect_end_element(qn("spreadsheetml", "definedName"));

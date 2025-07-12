@@ -35,7 +35,9 @@ struct defined_name
 {
     std::string name;
     optional<std::size_t> sheet_id;
+    std::string sheet_title;
     bool hidden = false;
+    bool function = false;
     std::string value;
 };
 
