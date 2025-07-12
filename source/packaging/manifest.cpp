@@ -63,7 +63,7 @@ path manifest::canonicalize(const std::vector<xlnt::relationship> &rels) const
 
         if (component == "..")
         {
-            absolute_parts.pop_back();
+            if (!absolute_parts.empty()) absolute_parts.pop_back();
             continue;
         }
 
