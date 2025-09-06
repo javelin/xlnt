@@ -21,7 +21,6 @@
 //
 // @license: http://www.opensource.org/licenses/mit-license.php
 // @author: see AUTHORS file
-
 #include <cassert>
 #include <cctype>
 #include <sstream>
@@ -537,16 +536,21 @@ void read_defined_names(worksheet ws, std::vector<defined_name> defined_names)
                 ws.print_area(ref);
             }
         }
-        else {
+        else
+        {
             auto i = name.value.find("!");
-            if (i != std::string::npos) {
+            if (i != std::string::npos)
+            {
                 auto ref = name.value.substr(i + 1);
                 if (is_valid_reference(ref))
                 {
-                    try {
+                    try
+                    {
                         ws.create_named_range(name.name, ref);
                     }
-                    catch (const xlnt::exception& e) {
+                    catch (const xlnt::exception& e)
+                    {
+
                     }
                 }
             }
