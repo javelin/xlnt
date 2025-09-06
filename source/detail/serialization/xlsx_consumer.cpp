@@ -2186,7 +2186,17 @@ void xlsx_consumer::read_office_document(const std::string &content_type) // CT_
                 parser().attribute_map(); // skip remaining attributes
                 name.value = read_text();
                 auto i = name.value.find('!');
-                if (i != std::string::npos) name.sheet_title = name.value.substr(1, i - 2);
+                if (i != std::string::npos)
+                {
+                    if (name.value[0] == '\'')
+                    {
+                        name.sheet_title = name.value.substr(1, i - 2);
+                    }
+                    else
+                    {
+                        name.sheet_title = name.value.substr(0, i);
+                    }
+                }
                 defined_names_.push_back(name);
 
                 expect_end_element(qn("spreadsheetml", "definedName"));
