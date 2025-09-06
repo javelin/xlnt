@@ -107,6 +107,10 @@ void worksheet::create_named_range(const std::string &name, const range_referenc
     {
         // name is not a valid reference, that's good
     }
+    catch (xlnt::invalid_column_index &)
+    {
+        // name does not pass reference checking in column_t
+    }
 
     std::vector<named_range::target> targets;
     targets.push_back({*this, reference});
