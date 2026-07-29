@@ -47,12 +47,32 @@ public:
     /// If this is true, concurrent calculation will be enabled for the workbook.
     /// </summary>
     bool concurrent_calc = true;
+
+    /// <summary>
+    /// If this is true, the workbook's circular references are deliberate and
+    /// should be resolved by iteration rather than reported as an error.
+    /// </summary>
+    bool iterate = false;
+
+    /// <summary>
+    /// The maximum number of iterations to perform when iterate is true.
+    /// </summary>
+    std::size_t iterate_count = 100;
+
+    /// <summary>
+    /// Iteration stops when no value changes by more than this between two
+    /// successive passes.
+    /// </summary>
+    double iterate_delta = 0.001;
 };
 
 inline bool operator==(const calculation_properties &lhs, const calculation_properties &rhs)
 {
     return lhs.calc_id == rhs.calc_id
-        && lhs.concurrent_calc == rhs.concurrent_calc;
+        && lhs.concurrent_calc == rhs.concurrent_calc
+        && lhs.iterate == rhs.iterate
+        && lhs.iterate_count == rhs.iterate_count
+        && lhs.iterate_delta == rhs.iterate_delta;
 }
 
 inline bool operator!=(const calculation_properties &lhs, const calculation_properties &rhs)

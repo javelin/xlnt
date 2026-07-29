@@ -713,6 +713,14 @@ void xlsx_producer::write_workbook(const relationship &rel)
         //write_attribute("calcMode", "auto");
         //write_attribute("fullCalcOnLoad", "1");
         write_attribute("concurrentCalc", write_bool(source_.calculation_properties().concurrent_calc));
+        // Written only when iteration is enabled, so a workbook that does not
+        // use it produces byte-identical output to before this change.
+        if (source_.calculation_properties().iterate)
+        {
+            write_attribute("iterate", write_bool(source_.calculation_properties().iterate));
+            write_attribute("iterateCount", source_.calculation_properties().iterate_count);
+            write_attribute("iterateDelta", source_.calculation_properties().iterate_delta);
+        }
         write_end_element(xmlns, "calcPr");
     }
 

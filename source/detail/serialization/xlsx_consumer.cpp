@@ -2279,6 +2279,18 @@ void xlsx_consumer::read_office_document(const std::string &content_type) // CT_
             {
                 calc_props.concurrent_calc = is_true(parser().attribute("concurrentCalc"));
             }
+            if (parser().attribute_present("iterate"))
+            {
+                calc_props.iterate = is_true(parser().attribute("iterate"));
+            }
+            if (parser().attribute_present("iterateCount"))
+            {
+                calc_props.iterate_count = parser().attribute<std::size_t>("iterateCount");
+            }
+            if (parser().attribute_present("iterateDelta"))
+            {
+                calc_props.iterate_delta = parser().attribute<double>("iterateDelta");
+            }
             target_.calculation_properties(calc_props);
             parser().attribute_map(); // skip remaining
         }
