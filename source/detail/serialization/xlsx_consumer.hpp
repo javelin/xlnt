@@ -258,6 +258,11 @@ private:
 	/// </summary>
 	void read_drawings(worksheet ws, const path &part);
 
+	/// <summary>
+	/// Reads one table part into the worksheet's table definitions.
+	/// </summary>
+	void read_table(worksheet ws);
+
 	// Unknown Parts
 
 	/// <summary>

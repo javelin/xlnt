@@ -133,6 +133,11 @@ std::vector<range_reference> worksheet::merged_ranges() const
     return d_->merged_cells_;
 }
 
+std::vector<table_definition> worksheet::tables() const
+{
+    return d_->tables_;
+}
+
 bool worksheet::has_page_margins() const
 {
     return d_->page_margins_.is_set();

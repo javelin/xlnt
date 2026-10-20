@@ -1448,6 +1448,51 @@ worksheet xlsx_consumer::read_worksheet_end(const std::string &rel_id)
         read_drawings(ws, drawings_part);
     }
 
+    // A table part is an enrichment rather than part of the grid: a workbook
+    // whose table definition cannot be read still loads, without that table.
+    for (const auto &table_rel : manifest.relationships(sheet_path, xlnt::relationship_type::table_definition))
+    {
+        try
+        {
+            // A target written package-absolute ("/xl/tables/table1.xml") is made
+            // relative when the relationships are read, but against the wrong
+            // folder: it arrives as "tables/table1.xml", which canonicalize()
+            // resolves to xl/worksheets/tables/... and which does not exist. The
+            // original is gone by then, so try the sheet's folder and each folder
+            // above it, and take the first that holds the part.
+            auto table_part = manifest.canonicalize({workbook_rel, sheet_rel, table_rel});
+            if (!archive_->has_file(table_part))
+            {
+                auto folder = path(table_rel.source().path().string()).parent();
+                while (true)
+                {
+                    const auto candidate = folder.append(table_rel.target().path());
+                    if (archive_->has_file(candidate))
+                    {
+                        table_part = candidate;
+                        break;
+                    }
+                    if (folder.string().empty() || folder.is_root())
+                    {
+                        break;
+                    }
+                    folder = folder.parent();
+                }
+            }
+
+            auto receive = xml::parser::receive_default;
+            auto table_part_streambuf = archive_->open(table_part);
+            std::istream table_part_stream(table_part_streambuf.get());
+            xml::parser parser(table_part_stream, table_part.string(), receive);
+            parser_ = &parser;
+
+            read_table(ws);
+        }
+        catch (const std::exception &)
+        {
+        }
+    }
+
     if (manifest.has_relationship(sheet_path, xlnt::relationship_type::printer_settings))
     {
         read_part({workbook_rel, sheet_rel,
@@ -3295,6 +3340,55 @@ void xlsx_consumer::read_comments(worksheet ws)
 
     expect_end_element(qn("spreadsheetml", "commentList"));
     expect_end_element(qn("spreadsheetml", "comments"));
+}
+
+void xlsx_consumer::read_table(worksheet ws)
+{
+    table_definition table;
+
+    expect_start_element(qn("spreadsheetml", "table"), xml::content::complex);
+    table.name = parser().attribute_present("displayName")
+        ? parser().attribute("displayName")
+        : parser().attribute("name");
+    table.ref = range_reference(parser().attribute("ref"));
+    if (parser().attribute_present("headerRowCount"))
+    {
+        table.header_row_count = parser().attribute<std::size_t>("headerRowCount");
+    }
+    if (parser().attribute_present("totalsRowCount"))
+    {
+        table.totals_row_count = parser().attribute<std::size_t>("totalsRowCount");
+    }
+    skip_attributes();
+
+    while (in_element(qn("spreadsheetml", "table")))
+    {
+        auto child = expect_start_element(xml::content::complex);
+
+        if (child == qn("spreadsheetml", "tableColumns"))
+        {
+            skip_attributes();
+
+            while (in_element(qn("spreadsheetml", "tableColumns")))
+            {
+                expect_start_element(qn("spreadsheetml", "tableColumn"), xml::content::complex);
+                table.columns.push_back(parser().attribute("name"));
+                skip_attributes();
+                skip_remaining_content(qn("spreadsheetml", "tableColumn"));
+                expect_end_element(qn("spreadsheetml", "tableColumn"));
+            }
+        }
+        else
+        {
+            skip_remaining_content(child);
+        }
+
+        expect_end_element(child);
+    }
+
+    expect_end_element(qn("spreadsheetml", "table"));
+
+    ws.d_->tables_.push_back(std::move(table));
 }
 
 void xlsx_consumer::read_drawings(worksheet ws, const path &part)

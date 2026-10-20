@@ -41,6 +41,7 @@
 #include <xlnt/worksheet/sheet_view.hpp>
 #include <xlnt/worksheet/print_options.hpp>
 #include <xlnt/worksheet/sheet_pr.hpp>
+#include <xlnt/worksheet/table_definition.hpp>
 #include <detail/implementations/cell_impl.hpp>
 #include <detail/implementations/workbook_impl.hpp>
 
@@ -90,6 +91,7 @@ struct worksheet_impl
         extension_list_ = other.extension_list_;
         sheet_properties_ = other.sheet_properties_;
         print_options_ = other.print_options_;
+        tables_ = other.tables_;
 
         for (auto &cell : cell_map_)
         {
@@ -122,7 +124,8 @@ struct worksheet_impl
             && comments_ == rhs.comments_
             && print_options_ == rhs.print_options_
             && sheet_properties_ == rhs.sheet_properties_
-            && extension_list_ == rhs.extension_list_;
+            && extension_list_ == rhs.extension_list_
+            && tables_ == rhs.tables_;
     }
 
     bool operator!=(const worksheet_impl& rhs) const
@@ -165,6 +168,9 @@ struct worksheet_impl
     optional<sheet_pr> sheet_properties_;
 
     optional<ext_list> extension_list_;
+
+    // Tables (ListObjects) read from the worksheet's table parts.
+    std::vector<table_definition> tables_;
 
     std::string drawing_rel_id_;
     optional<drawing::spreadsheet_drawing> drawing_;

@@ -32,6 +32,7 @@
 #include <xlnt/xlnt_config.hpp>
 #include <xlnt/cell/index_types.hpp>
 #include <xlnt/packaging/relationship.hpp>
+#include <xlnt/worksheet/table_definition.hpp>
 #include <xlnt/worksheet/page_margins.hpp>
 #include <xlnt/worksheet/page_setup.hpp>
 #include <xlnt/worksheet/sheet_view.hpp>
@@ -504,6 +505,13 @@ public:
     /// Returns a vector of references of all merged ranges in the worksheet.
     /// </summary>
     std::vector<range_reference> merged_ranges() const;
+
+    /// <summary>
+    /// Returns the tables defined on this worksheet, in the order the
+    /// worksheet's relationships list them. Read when a workbook is loaded;
+    /// not written back when it is saved.
+    /// </summary>
+    std::vector<table_definition> tables() const;
 
     // operators
 
