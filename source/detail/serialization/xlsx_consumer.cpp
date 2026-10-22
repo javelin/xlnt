@@ -2310,6 +2310,15 @@ void xlsx_consumer::read_office_document(const std::string &content_type) // CT_
                 }
                 defined_names_.push_back(name);
 
+                // Kept as written as well: the worksheet pass below keeps only
+                // what a named_range can represent, and drops the rest.
+                name_definition kept;
+                kept.name = name.name;
+                kept.value = name.value;
+                kept.local_sheet_id = name.sheet_id;
+                kept.hidden = name.hidden;
+                target_.d_->defined_names_.push_back(kept);
+
                 expect_end_element(qn("spreadsheetml", "definedName"));
             }
         }

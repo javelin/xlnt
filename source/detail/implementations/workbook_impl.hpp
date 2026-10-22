@@ -35,6 +35,7 @@
 #include <xlnt/utils/datetime.hpp>
 #include <xlnt/utils/variant.hpp>
 #include <xlnt/workbook/calculation_properties.hpp>
+#include <xlnt/workbook/name_definition.hpp>
 #include <xlnt/workbook/theme.hpp>
 #include <xlnt/workbook/workbook_view.hpp>
 #include <xlnt/worksheet/range.hpp>
@@ -114,6 +115,7 @@ struct workbook_impl
             && code_name_ == other.code_name_
             && file_version_ == other.file_version_
             && calculation_properties_ == other.calculation_properties_
+            && defined_names_ == other.defined_names_
             && arch_id_flags_ == other.arch_id_flags_
             && extensions_ == other.extensions_;
     }
@@ -172,6 +174,7 @@ struct workbook_impl
 
     optional<file_version_t> file_version_;
     optional<calculation_properties> calculation_properties_;
+    std::vector<name_definition> defined_names_;
     optional<std::string> abs_path_;
     optional<std::size_t> arch_id_flags_;
     optional<ext_list> extensions_;

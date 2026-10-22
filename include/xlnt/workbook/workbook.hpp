@@ -35,6 +35,7 @@
 
 #include <xlnt/xlnt_config.hpp>
 #include <xlnt/internal/features.hpp>
+#include <xlnt/workbook/name_definition.hpp>
 
 #if XLNT_HAS_INCLUDE(<string_view>) && XLNT_HAS_FEATURE(U8_STRING_VIEW)
   #include <string_view>
@@ -1153,6 +1154,13 @@ public:
     /// Sets the calculation properties of this workbook to props.
     /// </summary>
     void calculation_properties(const class calculation_properties &props);
+
+    /// <summary>
+    /// Returns every defined name in the workbook part, in file order and as
+    /// written, including those named_ranges() cannot represent. Read when a
+    /// workbook is loaded; not written back when it is saved.
+    /// </summary>
+    std::vector<name_definition> defined_names() const;
 
     /// <summary>
     /// Returns true if this workbook is equal to other. If compare_by_reference is true, the comparison

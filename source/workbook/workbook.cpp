@@ -2019,6 +2019,11 @@ void workbook::clear_calculation_properties()
     d_->calculation_properties_.clear();
 }
 
+std::vector<name_definition> workbook::defined_names() const
+{
+    return d_->defined_names_;
+}
+
 class calculation_properties workbook::calculation_properties() const
 {
     if (!d_->calculation_properties_.is_set())
