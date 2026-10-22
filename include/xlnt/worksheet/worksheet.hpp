@@ -507,9 +507,10 @@ public:
     std::vector<range_reference> merged_ranges() const;
 
     /// <summary>
-    /// Returns the tables defined on this worksheet, in the order the
-    /// worksheet's relationships list them. Read when a workbook is loaded;
-    /// not written back when it is saved.
+    /// Returns the tables defined on this worksheet, in no particular order:
+    /// the package keeps a part's relationships unordered. Find a table by
+    /// its name. Read when a workbook is loaded; not written back when it is
+    /// saved.
     /// </summary>
     std::vector<table_definition> tables() const;
 
