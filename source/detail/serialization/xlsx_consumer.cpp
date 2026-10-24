@@ -209,6 +209,10 @@ xlnt::detail::Cell parse_cell(xlnt::row_t row_arg, xml::parser *parser, std::uno
         switch (e)
         {
         case xml::parser::start_element: {
+            if (level == 1 && (string_equal(parser->name(), "v") || string_equal(parser->name(), "is")))
+            {
+                c.has_value = true;
+            }
             if (string_equal(parser->name(), "f") && parser->attribute_present("t"))
             {
                 // Skip shared formulas with a ref attribute because it indicates that this
@@ -965,7 +969,10 @@ void xlsx_consumer::read_worksheet_sheetdata()
                     cell_reference(cell.ref.column, cell.ref.row);
             }
         }
-        if (!cell.value.empty())
+        // An empty value is still a value for a formula's text answer: Excel
+        // stores a formula answering "" as t="str" with an empty <v>.
+        const bool empty_text_answer = cell.has_value && cell.type == cell::type::formula_string;
+        if (!cell.value.empty() || empty_text_answer)
         {
             ws_cell_impl->type_ = cell.type;
             switch (cell.type)

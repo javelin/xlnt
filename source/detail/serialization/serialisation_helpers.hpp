@@ -93,6 +93,10 @@ struct Cell
     int style_index = -1; // 's'
     Cell_Reference ref{0, 0}; // 'r'
     std::string value; // <v> OR <is>
+    // Whether a <v> or <is> element was present, even an empty one. A formula
+    // whose cached answer is the empty string is written t="str" with an empty
+    // <v>, and that is a value; a formula with no <v> has none.
+    bool has_value = false;
     std::string formula_string; // <f>
     // Shared formulae: 'si' identifies the group, and the master cell is the
     // one that carried the 'ref' attribute. A member of the group means the
