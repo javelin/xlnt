@@ -66,6 +66,9 @@ struct cell_impl
     // cell is not part of one. Kept as text so this header needs no extra
     // include; range_reference is reconstructed on access.
     std::string array_formula_ref_;
+    // The 'cm' attribute: an index into the workbook's cell metadata, -1 when
+    // the cell has none. Excel writes it on a dynamic-array formula.
+    int cell_metadata_index_ = -1;
     optional<hyperlink_impl> hyperlink_;
     format_impl_ptr format_;
     optional<comment *> comment_;

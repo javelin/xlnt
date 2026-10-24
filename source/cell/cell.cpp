@@ -558,6 +558,16 @@ range_reference cell::array_formula_range() const
     return range_reference(d_->array_formula_ref_);
 }
 
+bool cell::has_cell_metadata() const
+{
+    return d_->cell_metadata_index_ >= 0;
+}
+
+std::size_t cell::cell_metadata_index() const
+{
+    return static_cast<std::size_t>(d_->cell_metadata_index_);
+}
+
 cell_reference cell::shared_formula_master() const
 {
     const auto &masters = worksheet().d_->shared_formula_masters_;

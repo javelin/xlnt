@@ -535,6 +535,20 @@ public:
     range_reference array_formula_range() const;
 
     /// <summary>
+    /// Returns true if the cell carries a cell-metadata index (the 'cm'
+    /// attribute). Excel writes one on a dynamic-array formula - one whose
+    /// result spills - which is what tells it apart from a legacy array
+    /// formula entered with Ctrl+Shift+Enter.
+    /// </summary>
+    bool has_cell_metadata() const;
+
+    /// <summary>
+    /// The cell's 1-based index into the workbook's cell metadata. Assumes
+    /// has_cell_metadata() is true. The metadata part itself is not read.
+    /// </summary>
+    std::size_t cell_metadata_index() const;
+
+    /// <summary>
     /// The cell that carried this shared formula group's text. Assumes
     /// has_shared_formula() is true.
     /// </summary>

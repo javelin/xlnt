@@ -957,6 +957,7 @@ void xlsx_consumer::read_worksheet_sheetdata()
         }
         if (cell.cell_metadata_idx != -1)
         {
+            ws_cell_impl->cell_metadata_index_ = cell.cell_metadata_idx;
         }
         ws_cell_impl->phonetics_visible_ = cell.is_phonetic;
         if (!cell.formula_string.empty())
